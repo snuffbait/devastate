@@ -1,4 +1,3 @@
-
 const TRANSLATIONS = {
   "青制服": "Blue Uni",
   "黒制服": "Black Uni",
@@ -80,6 +79,8 @@ function fae17(){
 fae17();
 let fae20=false,fae21=0,fae22=performance.now(),fae23=0;
 const fae24=2*1024*1024;
+let fae45=null;
+
 function fae25(fae26,fae27,fae28){
   let fae29=fae27;
   for(;fae29<fae28-1;fae29++){
@@ -102,6 +103,14 @@ function fae36(fae37){
   if(typeof Module==="undefined"||!Module.HEAPU8){fae39();return;}
   const fae38=Module.HEAPU8;
   if(fae38.length===0){fae39();return;}
+  
+  if(fae38.buffer!==fae45){
+    fae45=fae38.buffer;
+    fae21=0;
+    fae22=performance.now();
+    fae23=0;
+  }
+
   if(fae21>=fae38.length){fae21=0;fae22=performance.now();fae23=0;}
   const fae40=Math.min(fae21+fae24,fae38.length);
   fae21=fae25(fae38,fae21,fae40);
