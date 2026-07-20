@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WOLF RPG Web Decryptor</title>
+    <!-- Load Pyodide for running Python in the browser -->
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js"></script>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: radial-gradient(circle at center, #2b2b2b, #121212); 
+            color: white; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            height: 100vh; 
+            margin: 0; 
+        }
+        .container { 
+            background: rgba(30, 30, 35, 0.95); 
+            padding: 40px; 
+            border-radius: 16px; 
+            text-align: center; 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+        }
+        h1 { color: #00e5ff; margin-top: 0; text-shadow: 0 0 10px rgba(0, 229, 255, 0.5); }
+        p { color: #aaa; }
+        input[type="file"] { margin: 20px 0; }
+        button, input::file-selector-button { 
+            background: linear-gradient(135deg, #00e5ff, #0077ff); 
+            color: white; 
+            border: none; 
+            padding: 12px 24px; 
+            border-radius: 8px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 119, 255, 0.4);
+        }
+        button:hover, input::file-selector-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 229, 255, 0.6);
+        }
+        button:disabled { 
+            background: #444; 
+            color: #888; 
+            cursor: not-allowed; 
+            box-shadow: none;
+            transform: none;
+        }
+        #log { 
+            margin-top: 20px; 
+            max-height: 200px; 
+            overflow-y: auto; 
+            background: rgba(0,0,0,0.5); 
+            color: #00ffcc; 
+            padding: 15px; 
+            border-radius: 8px; 
+            text-align: left; 
+            font-family: monospace; 
+            font-size: 13px; 
+            width: 450px; 
+            border: 1px solid #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>WOLF RPG Web Decryptor</h1>
+        <p>Select your encrypted <code>Data.wolf</code> file to decrypt and extract it instantly in your browser!</p>
+        <input type="file" id="fileInput" accept=".wolf" />
+        <br>
+        <button id="decryptBtn" disabled>Loading Python Engine...</button>
+        <div id="log">Initializing Pyodide virtual environment...</div>
+    </div>
+
+    <script>
+        let pyodide = null;
+
+        function log(msg) {
+            const l = document.getElementById('log');
+            l.innerHTML += msg + '<br>';
+            l.scrollTop = l.scrollHeight;
+            console.log(msg);
+        }
+
+        async function init() {
+            try {
+                pyodide = await loadPyodide();
+                log("Pyodide loaded. Installing Python dependencies...");
+                await pyodide.loadPackage("micropip");
+                const micropip = pyodide.pyimport("micropip");
+                await micropip.install(['ruamel.yaml', 'colorama']);
+                
+                log("Fetching decryption library (wolfrpg.zip)...");
+                const response = await fetch("wolfrpg.zip");
+                if (!response.ok) throw new Error("Failed to fetch wolfrpg.zip");
+                const buffer = await response.arrayBuffer();
+                pyodide.unpackArchive(buffer, "zip");
+                
+                log("System Ready! You can now select a file and decrypt.");
+                const btn = document.getElementById('decryptBtn');
+                btn.disabled = false;
+                btn.textContent = "Decrypt File";
+            } catch (err) {
+                log("Error during initialization: " + err.message);
+            }
+        }
+        
+        document.getElementById('decryptBtn').addEventListener('click', async () => {
+            const fileInput = document.getElementById('fileInput');
+            if (fileInput.files.length === 0) {
+                alert("Please select a Data.wolf file first!");
+                return;
+            }
+            const file = fileInput.files[0];
+            const btn = document.getElementById('decryptBtn');
+            btn.disabled = true;
+            btn.textContent = "Decrypting... Please wait";
+            log("Reading " + file.name + " into memory...");
+
+            try {
+                const buffer = await file.arrayBuffer();
+                pyodide.FS.writeFile('/' + file.name, new Uint8Array(buffer));
+                
+                log("Extracting archive (this may take a minute for large games)...");
+                await pyodide.runPythonAsync(`
+import os
+import shutil
+from pathlib import Path
+from wolfrpg.DXArchive import DXArchive
+
+filename = "${file.name}"
+out_dir = Path("/output")
+if out_dir.exists():
+    shutil.rmtree(out_dir)
+out_dir.mkdir()
+
+arc = DXArchive()
+success = arc.loadArchive(Path("/" + filename), out_dir)
+if not success:
+    raise Exception("Failed to load archive. It may not be a valid WOLF RPG archive.")
+
+arc.extractAll()
+
+# Zip the extracted files
+shutil.make_archive("/extracted_data", 'zip', "/output")
+                `);
+                
+                log("Extraction complete! Preparing ZIP download...");
+                const zipData = pyodide.FS.readFile("/extracted_data.zip");
+                const blob = new Blob([zipData], { type: "application/zip" });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = file.name.replace(".wolf", "") + "_Decrypted.zip";
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                log("Success! Download started.");
+                
+            } catch (err) {
+                log("Error: " + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = "Decrypt File";
+            }
+        });
+
+        init();
+    </script>
+</body>
+</html>
