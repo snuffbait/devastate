@@ -29,6 +29,7 @@ const TRANSLATIONS = {
   "スタート": "Start",
   "コンティニュー": "Continue",
   "購入": "Buy", 
+  "セーブしました": "Saving her does nothing.", 
   "深刻なエネルギー不足により": "Due to a severe energy shortage",
   "世界は滅亡寸前の状況に陥っていた。": "the world was on the brink of collapse.",
   "あらゆる対策が実を結ばずに終わった時": "When every countermeasure failed to bear fruit",
