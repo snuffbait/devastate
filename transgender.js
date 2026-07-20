@@ -1,4 +1,4 @@
-const TRANSLATIONS = {
+const transfaegender = {
   "青制服": "Blue Uni",
   "黒制服": "Black Uni",
   "派手な服": "Loud Outfit",
@@ -61,7 +61,7 @@ function fae4(fae5){
   fae6.sort((fae13,fae14)=>fae14.jpBytes.length-fae13.jpBytes.length);
   return fae6;
 }
-let fae15=fae4(TRANSLATIONS);
+let fae15=fae4(transfaegender);
 let fae16=new Map();
 function fae17(){
   fae16=new Map();
@@ -121,8 +121,8 @@ function fae41(){
   fae39();
 }
 window.addTranslation=function(fae42,fae43){
-  TRANSLATIONS[fae42]=fae43;
-  fae15=fae4(TRANSLATIONS);
+  transfaegender[fae42]=fae43;
+  fae15=fae4(transfaegender);
   fae17();
 };
 window.startTranslationPatch=fae41;
