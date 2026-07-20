@@ -5,36 +5,30 @@ const TRANSLATIONS = {
   "体操服": "Gym Wear",
   "Tシャツ": "T-Shirt",
   "キャンセル": "Cancel",
-
   "スクール水着": "School Swimsuit",
   "グリーンブラ": "Green Bra",
   "ピンクブラ": "Pink Bra",
   "マイクロビキニ": "Micro Bikini",
   "ばんそうこう": "Band-Aid",
-
   "黒制服スカート": "Black Uniform Skirt",
   "制服スカート": "Uniform Skirt",
   "黒のスカート": "Black Skirt",
   "ブルマ": "Bloomers",
   "デニム": "Denim",
-
   "スパッツ": "Leggings",
   "ローライズショーツ": "Low-Rise Shorts",
-
   "目隠し": "Blindfold",
   "首輪": "Collar",
   "ねこみみ": "Cat Ears",
   "長髪ウィッグ": "Long Hair Wig",
   "さるぐつわ": "Gag",
   "黒タイツ": "Black Tights",
-
   "ボイス": "Voice",
   "全体音量": "Total Volume",
   "終了": "Exit",
-
   "スタート": "Start",
   "コンティニュー": "Continue",
-
+  "購入": "Buy", 
   "深刻なエネルギー不足により": "Due to a severe energy shortage",
   "世界は滅亡寸前の状況に陥っていた。": "the world was on the brink of collapse.",
   "あらゆる対策が実を結ばずに終わった時": "When every countermeasure failed to bear fruit",
