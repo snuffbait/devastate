@@ -8,13 +8,12 @@
   <meta name="mobile-web-app-capable" content="yes"/>
   <meta name="mobile-web-app-status-bar-style" content="black-translucent"/>
   <title>Browser Woditor</title>
-  <!-- The temporary title will be automatically replaced with the projectName in settings.js on load -->
   <style>
 
     body {
       width: 100vw;
       height: 100vh;
-      height: 100dvh; /* For iOS */
+      height: 100dvh;
       margin: 0 0 0 0;
       padding: 0 0 0 0;
       overflow: hidden;
@@ -152,7 +151,7 @@
       align-items: center;
       text-align: center;
       font-size: 2.5vh;
-      background-color: whitesmoke; /* Overwritten below with javascript (to show on long press) */
+      background-color: whitesmoke; 
       cursor: pointer;
     }
 
@@ -214,7 +213,6 @@
       font-size: 3dvmin;
     }
 
-    /* popup */
     #popup {
       height: auto;
       padding: 20px;
@@ -463,7 +461,7 @@
 </head>
 
 <body>
-  <audio id="sound" src="assets/sample.wav" preload="auto" hidden></audio> <!-- For iOS adjustment -->
+  <audio id="sound" src="assets/sample.wav" preload="auto" hidden></audio> 
   <div id="toast"></div>
   <div id="outer">
     <div id="container">
@@ -472,8 +470,8 @@
           <div class="side-header" id="left-header">
           </div>
           <div class="side-content" id="left-content">
-            <div id="right-hold" class="itemh" style="width: 100%; height: 30%;"></div> <!-- Special setting in systems.js (right-hold) -->
-            <span id="move-axis" class="itemh" style="width: 100%; height: 70%;"></span> <!-- Special setting in keydispatch.js -->
+            <div id="right-hold" class="itemh" style="width: 100%; height: 30%;"></div>
+            <span id="move-axis" class="itemh" style="width: 100%; height: 70%;"></span>
           </div>
           <div class="side-footer" id="lefft-footer">
           </div>
@@ -493,7 +491,6 @@
               <div id="popup" hidden>
                 <div>
                   <span><input class="sub-button" type="button" onclick="showInstructions()" ontouchstart="showInstructions()" value="Instructions"/></span>
-<!--                  <span><input class="sub-button" type="button" onclick="openLink('LICENSE.zip')" ontouchstart="openLink('LICENSE.zip')" value="License (.zip)"/></span>-->
                 </div>
                 <div style="margin-top: 5px;">
                   <span><input class="sub-button" type="button" id="fullscreen" value="Fullscreen / Exit"/></span>
